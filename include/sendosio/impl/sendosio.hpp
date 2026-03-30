@@ -55,7 +55,7 @@ template<class BufSeq> auto read( tcp_socket& sock, BufSeq&& seq )
 
 template<class BufSeq> auto write_some( tcp_socket& sock, BufSeq&& seq )
 {
-    return sock.async_write_some( sock, std::forward<BufSeq>( seq ), sendosio::detail::use_sender );
+    return sock.async_write_some( std::forward<BufSeq>( seq ), sendosio::detail::use_sender );
 }
 
 template<class BufSeq> auto write( tcp_socket& sock, BufSeq&& seq )

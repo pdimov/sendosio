@@ -17,4 +17,5 @@ function(add_sendosio_test name)
 endfunction()
 
 add_sendosio_test(test_read_some)
+add_sendosio_test(test_write_some)
 add_sendosio_test(test_socket_pair)
