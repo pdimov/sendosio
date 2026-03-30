@@ -46,7 +46,7 @@ private:
 
         using operation_state_concept = ex::operation_state_t;
 
-        void start() &; // not yet implemented
+        void start() & noexcept; // not yet implemented
     };
 
 public:
@@ -58,6 +58,7 @@ public:
         ex::set_error_t( std::exception_ptr )
     >;
 
+    template<class Self, class... Env>
     static consteval completion_signatures get_completion_signatures() noexcept
     {
         return {};
