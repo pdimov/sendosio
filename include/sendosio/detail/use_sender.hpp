@@ -20,6 +20,17 @@ namespace ex = beman::execution;
 struct use_sender_t {};
 inline constexpr use_sender_t use_sender;
 
+template<class Receiver, class... Args>
+struct completion_handler
+{
+    Receiver& recv_;
+
+    void operator()( Args... args ) const
+    {
+        ex::set_value( std::move(recv_), std::move(args)... );
+    }
+};
+
 template<class Sig, class Init, class... InitArgs> class sender;
 
 template<class... Args, class Init, class... InitArgs> class sender<void(Args...), Init, InitArgs...>
@@ -46,7 +57,14 @@ private:
 
         using operation_state_concept = ex::operation_state_t;
 
-        void start() & noexcept; // not yet implemented
+        void start() & noexcept
+        {
+            std::apply( [&]( auto&&... args ) {
+
+                std::move(init_)( completion_handler<std::decay_t<Receiver>, Args...>{ recv_ }, std::move(args)... );
+
+            }, std::move(args_) );
+        }
     };
 
 public:

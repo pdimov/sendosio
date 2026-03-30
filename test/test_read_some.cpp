@@ -4,6 +4,8 @@
 
 #include <sendosio/sendosio.hpp>
 #include <beman/execution/execution.hpp>
+#include <thread>
+#include <cstdio>
 
 namespace ex = beman::execution;
 
@@ -13,10 +15,23 @@ int main()
     sendosio::tcp_socket sock( ioc );
 
     unsigned char buffer[ 4 ];
-    auto sender = sendosio::read_some( sock, sendosio::mutable_buffer( buffer, sizeof(buffer) ) );
 
-    // temporary
-    constexpr auto x = ex::get_completion_signatures<decltype(sender), ex::detail::sync_wait_env>();
+    auto sender = sendosio::read_some( sock, sendosio::mutable_buffer( buffer, sizeof(buffer) ) )
+        | ex::then( []( boost::system::error_code ec, std::size_t n ) {
+
+            if( ec.failed() )
+            {
+                std::printf( "Error: %s\n", ec.what().c_str() );
+            }
+            else
+            {
+                std::printf( "Success: %zu\n", n );
+            }
+        } );
+
+    std::thread th( &sendosio::io_context::run, &ioc );
 
     ex::sync_wait( std::move( sender ) );
+
+    th.join();
 }
