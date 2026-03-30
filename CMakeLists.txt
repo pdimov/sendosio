@@ -6,6 +6,13 @@ cmake_minimum_required(VERSION 3.14...4.2)
 
 project(sendosio LANGUAGES CXX)
 
+if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+
+    # required for beman::execution
+    set(CMAKE_CXX_STANDARD 23)
+
+endif()
+
 add_library(sendosio
     src/sendosio.cpp
 )
@@ -17,6 +24,7 @@ target_include_directories(sendosio PUBLIC include)
 target_link_libraries(sendosio
 PUBLIC
     Boost::asio
+    beman::execution_headers
 )
 
 target_compile_features(sendosio PUBLIC cxx_std_20)
@@ -41,6 +49,26 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     set(BOOST_INCLUDE_LIBRARIES asio)
 
     FetchContent_MakeAvailable(Boost)
+
+    # beman.execution
+
+    FetchContent_Declare(
+        beman_execution
+        GIT_REPOSITORY https://github.com/bemanproject/execution
+        GIT_TAG 09d5a5c
+        SYSTEM
+        FIND_PACKAGE_ARGS
+            0.2.0
+            EXACT
+            NAMES
+            beman.execution
+            COMPONENTS
+            execution_headers
+    )
+
+    set(BEMAN_USE_MODULES OFF)
+
+    FetchContent_MakeAvailable(beman_execution)
 
 endif()
 

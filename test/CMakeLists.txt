@@ -2,10 +2,19 @@
 # Distributed under the Boost Software License, Version 1.0.
 # https://www.boost.org/LICENSE_1_0.txt
 
-add_executable(sendosio_test_socket_pair)
+function(add_sendosio_test name)
 
-target_sources(sendosio_test_socket_pair PRIVATE test_socket_pair.cpp)
+	set(target sendosio-${name})
 
-target_link_libraries(sendosio_test_socket_pair PRIVATE sendosio::sendosio)
+	add_executable(${target})
 
-add_test(sendosio_test_socket_pair sendosio_test_socket_pair)
+	target_sources(${target} PRIVATE ${name}.cpp)
+
+	target_link_libraries(${target} PRIVATE sendosio::sendosio)
+
+	add_test(NAME ${target} COMMAND ${target})
+
+endfunction()
+
+add_sendosio_test(test_read_some)
+add_sendosio_test(test_socket_pair)
