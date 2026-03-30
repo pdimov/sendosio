@@ -23,6 +23,8 @@ target_compile_features(sendosio PUBLIC cxx_std_20)
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
 
+    include(CTest)
+
     include(FetchContent)
 
     # Boost
