@@ -22,11 +22,12 @@ public:
     using boost::asio::io_context::io_context;
 };
 
-class tcp_socket: public boost::asio::ip::tcp::socket
+class tcp_socket: public boost::asio::basic_stream_socket<boost::asio::ip::tcp, io_context::executor_type>
 {
 public:
 
-    using boost::asio::ip::tcp::socket::socket;
+    using base_type = boost::asio::basic_stream_socket<boost::asio::ip::tcp, io_context::executor_type>;
+    using base_type::basic_stream_socket;
 };
 
 class const_buffer: public boost::asio::const_buffer

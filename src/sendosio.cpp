@@ -7,18 +7,18 @@
 #include <boost/asio/co_spawn.hpp>
 #include <boost/asio/detached.hpp>
 
-static boost::asio::awaitable<void> make_socket_pair_impl( boost::asio::io_context& ioc, boost::asio::ip::tcp::socket& client, boost::asio::ip::tcp::socket& server )
+using sendosio::tcp_socket;
+
+static boost::asio::awaitable<void> make_socket_pair_impl( boost::asio::io_context& ioc, tcp_socket::base_type& client, tcp_socket::base_type& server )
 {
     using boost::asio::ip::tcp;
 
-    tcp::acceptor acceptor( ioc, tcp::endpoint( tcp::v4(), 0 ) );
+    boost::asio::basic_socket_acceptor<tcp, boost::asio::io_context::executor_type> acceptor( ioc, tcp::endpoint( tcp::v4(), 0 ) );
     unsigned short port = acceptor.local_endpoint().port();
 
     co_await client.async_connect( tcp::endpoint( boost::asio::ip::address_v4::loopback(), port ), boost::asio::use_awaitable );
     server = co_await acceptor.async_accept( boost::asio::use_awaitable );
 }
-
-using sendosio::tcp_socket;
 
 std::pair<tcp_socket, tcp_socket> sendosio::test::make_socket_pair( io_context& ioc )
 {
