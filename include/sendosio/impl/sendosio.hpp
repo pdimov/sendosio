@@ -11,6 +11,8 @@
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/read.hpp>
 #include <boost/asio/write.hpp>
+#include <boost/asio/bind_immediate_executor.hpp>
+#include <boost/asio/inline_executor.hpp>
 
 namespace sendosio
 {
@@ -46,22 +48,22 @@ public:
 
 template<class BufSeq> auto read_some( tcp_socket& sock, BufSeq&& seq )
 {
-    return sock.async_read_some( std::forward<BufSeq>( seq ), sendosio::detail::use_sender );
+    return sock.async_read_some( std::forward<BufSeq>( seq ), boost::asio::bind_immediate_executor( boost::asio::inline_executor(), sendosio::detail::use_sender ) );
 }
 
 template<class BufSeq> auto read( tcp_socket& sock, BufSeq&& seq )
 {
-    return boost::asio::async_read( sock, std::forward<BufSeq>( seq ), sendosio::detail::use_sender );
+    return boost::asio::async_read( sock, std::forward<BufSeq>( seq ), boost::asio::bind_immediate_executor( boost::asio::inline_executor(), sendosio::detail::use_sender ) );
 }
 
 template<class BufSeq> auto write_some( tcp_socket& sock, BufSeq&& seq )
 {
-    return sock.async_write_some( std::forward<BufSeq>( seq ), sendosio::detail::use_sender );
+    return sock.async_write_some( std::forward<BufSeq>( seq ), boost::asio::bind_immediate_executor( boost::asio::inline_executor(), sendosio::detail::use_sender ) );
 }
 
 template<class BufSeq> auto write( tcp_socket& sock, BufSeq&& seq )
 {
-    return boost::asio::async_write( sock, std::forward<BufSeq>( seq ), sendosio::detail::use_sender );
+    return boost::asio::async_write( sock, std::forward<BufSeq>( seq ), boost::asio::bind_immediate_executor( boost::asio::inline_executor(), sendosio::detail::use_sender ) );
 }
 
 } // namespace sendosio
